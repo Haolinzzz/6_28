@@ -125,56 +125,58 @@ async function startRecording(
                 // Now you can use the created URL as the
                 // source of the video or audio element
                 recordedMedia.src = recordedMediaURL;
+                URL.revokeObjectURL(recordedMedia);
 
-                // Create a download button that lets the
-                // user download the recorded media
-                const downloadButton = document.createElement("a");
+                let formData = new FormData();
+                console.log("blob is"+ blob)
+                formData.append("file", blob,"file.mp3");
+                // let request = new XMLHttpRequest();
+                // request.open("POST", "https://hz-worker.hlzhong1130.workers.dev/submit",)
+                console.log(formData)
+                // request.send(formData)
 
-                // Set the download attribute to true so that
-                // when the user clicks the link the recorded
-                // media is automatically gets downloaded.
-                downloadButton.download = "Recorded-Media";
-
-                downloadButton.href = recordedMediaURL;
-
-                downloadButton.innerText = "Download it!";
-
-
-                downloadButton.onclick = () => {
-
-                    /* After download revoke the created URL
-                    using URL.revokeObjectURL() method to
-                    avoid possible memory leak. Though,
-                    the browser automatically revokes the
-                    created URL when the document is unloaded,
-                    but still it is good to revoke the created
-                    URLs */
-                    URL.revokeObjectURL(recordedMedia);
-
-                    let formData = new FormData();
-                    console.log("blob is"+ blob)
-                    formData.append("file", blob,"file.mp3");
-                    // let request = new XMLHttpRequest();
-                    // request.open("POST", "https://hz-worker.hlzhong1130.workers.dev/submit",)
-                    console.log(formData)
-                    // request.send(formData)
-
-                    var myBlob = new Blob(["This is my blob content"], {type : "text/plain"});
-                    formData.append("clip",myBlob);
-                    formData.append("test","testing")
-                    fetch('https://hz-worker.hlzhong1130.workers.dev/submit', {
+                var myBlob = new Blob(["This is my blob content"], {type : "text/plain"});
+                formData.append("clip",myBlob);
+                formData.append("test","testing")
+                fetch('https://hz-worker.hlzhong1130.workers.dev/submit', {
                         method: 'POST',
                         mode: 'no-cors',
                         body: formData
                     }
-                    );
+                );
 
+                // Create a download button that lets the
+                // user download the recorded media
+                // const downloadButton = document.createElement("a");
 
-                };
+                // Set the download attribute to true so that
+                // when the user clicks the link the recorded
+                // media is automatically gets downloaded.
+                // downloadButton.download = "Recorded-Media";
+                //
+                // downloadButton.href = "";
+                //
+                //
+                // downloadButton.innerText = "Sent it!";
+                //
+                //
+                // downloadButton.onclick = () => {
+                //
+                //     /* After download revoke the created URL
+                //     using URL.revokeObjectURL() method to
+                //     avoid possible memory leak. Though,
+                //     the browser automatically revokes the
+                //     created URL when the document is unloaded,
+                //     but still it is good to revoke the created
+                //     URLs */
+                //
+                //
+                //
+                // };
 
                 document.getElementById(
                     `${selectedMedia}-recorder`).append(
-                    recordedMedia, downloadButton);
+                    recordedMedia);
             };
 
             if (selectedMedia === "vid") {
